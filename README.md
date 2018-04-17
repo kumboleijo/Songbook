@@ -11,7 +11,8 @@ Live-Demo: https://www.songbook.de.cool
 
 ## Installation
 
-1.  Download the latest release (you can do this by using: `git clone --branch v1.0-beta --single-branch https://github.com/kumboleijo/Songbook`)
+1.  Download the latest release (currently: v1.0-beta)
+    > `git clone --branch v1.0-beta --single-branch https://github.com/kumboleijo/Songbook`
 2.  `cd <DIRECTORY>` and run `npm i`.
 
 ## How to use it
