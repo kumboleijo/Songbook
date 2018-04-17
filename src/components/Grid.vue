@@ -1,0 +1,284 @@
+<template>
+    <b-container fluid style="margin-top: .5em">
+
+        <b-row class="no-gutters" v-if="currentSong.name != 'Choose Song'" :key="currentSong.name">
+            <b-col lg="4" order-lg="1" class="fixed">
+                <b-container fluid>
+                    <b-card bg-variant="dark" text-variant="white" class="info-card" :title="getSongIndex(currentSong) + '.  ' + currentSong.name"
+                        :sub-title="currentSong.artist">
+                        <p class="card-text">
+                            <b-row class="no-gutters">
+                                <b-col cols="6" sm="4" md="3" lg="6">Capo</b-col>
+                                <b-col cols="6" sm="4" md="3" lg="6">
+                                    <div>
+                                        <b-dropdown size="sm" :text="currentSongCapo.toString()" :disabled="currentSong.files.length <= 1">
+                                            <b-dropdown-header>Choose other Version</b-dropdown-header>
+                                            <b-dropdown-item-button v-for="file of currentSong.files" :key="file.capo.toString() + file.file" @click="changeCapo(file)">Capo {{file.capo}}</b-dropdown-item-button>
+                                        </b-dropdown>
+                                    </div>
+                                </b-col>
+                            </b-row>
+                            <b-row class="no-gutters" v-for="info of currentSong.infos" :key="info.info">
+                                <b-col cols="6" sm="4" md="3" lg="6">{{info.info}}</b-col>
+                                <b-col cols="6" sm="8" md="9" lg="6">{{info.value}}</b-col>
+                            </b-row>
+                        </p>
+                    </b-card>
+                    <b-card bg-variant="dark" text-variant="white" class="info-card" style="margin-top: .5em" title="Stage Directions" v-if="settings[0].value">
+                        <p class="card-text">
+                            <b-row class="no-gutters" style="padding-bottom: 1em;">
+                                <b-col cols="6" sm="4" md="3" lg="6">
+                                    <b>Part</b>
+                                </b-col>
+                                <b-col cols="6" sm="8" md="9" lg="6">
+                                    <b>Presence</b>
+                                </b-col>
+                            </b-row>
+                            <b-row class="no-gutters" v-for="part of currentSong.stageDirections.parts" :key="part.name" style="padding-bottom: 1em">
+                                <b-col cols="6" sm="4" md="3" lg="6">{{part.name}}</b-col>
+                                <b-col cols="6" sm="8" md="9" lg="6">
+                                    <p v-for="value of part.values" :key="value" style="margin: 0px">
+                                        {{value}}
+                                    </p>
+                                </b-col>
+                            </b-row>
+                        </p>
+                    </b-card>
+                    <b-card bg-variant="dark" text-variatn="white" id="btn-controls" class="info-card" style="margin-top: .5em">
+                        <b-row>
+                            <b-col cols="6">
+                                <b-button block @click="previousSong()">&lsaquo; Previous</b-button>
+                                <!-- <b-button block @click="previousSong()">&lsaquo; {{getPrevSong()}}</b-button> -->
+                            </b-col>
+                            <b-col cols="6">
+                                <b-button block @click="nextSong()">Next &rsaquo;</b-button>
+                                <!-- <b-button block @click="nextSong()">{{getNextSong()}} &rsaquo;</b-button> -->
+                            </b-col>
+                        </b-row>
+                    </b-card>
+                </b-container>
+            </b-col>
+            <b-col lg="8 ">
+                <!-- <b-container fluid class="song" v-html="songbook"></b-container fluid> -->
+                <b-container fluid class="song" v-html="currentSongFile"></b-container fluid>
+            </b-col>
+        </b-row>
+    </b-container>
+</template>
+
+<script>
+    import ChordSheetJS from 'chordsheetjs';
+
+    export default {
+        name: 'Grid',
+        components: {
+        },
+        beforeCreate() {
+            // console.log("Grid > beforeCreate()")
+        },
+        created() {
+            // console.log("Grid > created()")
+
+            this.$eventHub.on('data-created', ($Data) => {
+                this.songs = $Data.songs
+                this.songbooks = $Data.songbooks
+            })
+
+            this.$eventHub.on('current-songbook-changed', ($Data) => {
+                this.currentSongbook = $Data
+            })
+
+            this.$eventHub.on('current-setlist-changed', ($Data) => {
+                this.currentSetlist = $Data
+            })
+
+            this.$eventHub.on('current-song-changed', ($Data) => {
+                this.currentSong = $Data
+                this.currentSongFile = this.currentSong.files[0].file
+                this.currentSongCapo = this.currentSong.files[0].capo
+            })
+
+            this.$eventHub.on('settings-changed', ($Data) => {
+                this.settings = $Data
+            })
+
+            window.addEventListener('keyup', this.onKeyUp)
+        },
+        beforeMount() {
+            // console.log("Grid > beforeMount()")
+        },
+        beforeUpdate() {
+            // console.log("Grid > beforeUpdate()")
+        },
+        updated() {
+            // console.log("Grid > updated()")
+        },
+        beforeDestroy() {
+            // console.log("Grid > beforeDestroy()")
+        },
+        destroyed() {
+            // console.log("Grid > destroyed()")
+        },
+        data() {
+            return {
+                songs: [],
+                songbooks: [],
+                currentSongbook: { name: 'Choose Songbook' },
+                currentSong: { id: 0, name: 'Choose Song' },
+                currentSongCapo: 0,
+                currentSongFile: null,
+                currentSetlist: [],
+                settings: [
+                    { name: 'Stage Directions', value: false }
+                ],
+                scroll: false
+            }
+        },
+        computed: {
+            songbook() {
+                let chordSheet = this.currentSongFile.substring(0);
+
+                let parser = new ChordSheetJS.ChordProParser();
+                let song = parser.parse(chordSheet);
+
+                let formatter = new ChordSheetJS.HtmlTableFormatter();
+                let html = formatter.format(song);
+
+                return html
+            }
+        },
+        methods: {
+            getSongIndex(song) {
+                return (this.currentSetlist.indexOf(song) + 1).toString()
+            },
+            getPrevSong() {
+                if (this.getSongIndex(this.currentSong) > 1) {
+                    return this.currentSetlist[this.getSongIndex(this.currentSong) - 2].name
+                } else {
+                    return "---"
+                }
+            },
+            getNextSong() {
+                if (this.getSongIndex(this.currentSong) < this.currentSetlist.length) {
+                    return this.currentSetlist[this.getSongIndex(this.currentSong)].name
+                } else {
+                    return "---"
+                }
+            },
+            nextSong() {
+                this.$eventHub.emit('next-song')
+            },
+            previousSong() {
+                this.$eventHub.emit('previous-song')
+            },
+            openSong(song) {
+                this.$emit('songChanged', song)
+            },
+            changeCapo(file) {
+                this.currentSongCapo = file.capo
+                this.currentSongFile = file.file
+            },
+            autoScroll() {
+                window.scrollBy(0, 1)
+                scrolldelay = setTimeout(this.autoScroll(), 10)
+            },
+            onKeyUp(key) {
+                // console.log('key: ' + key.which)
+
+                // key: right arrow
+                if (key.which === 39) {
+                    key.preventDefault()
+                    this.nextSong()
+                }
+
+                // key: left arrow
+                if (key.which === 37) {
+                    key.preventDefault()
+                    this.previousSong()
+                }
+
+                // key: space
+                if (key.which === 32) {
+                    key.preventDefault()
+                    // this.autoScroll()
+                }
+            }
+        }
+    }
+
+</script>
+
+<!-- Add "scoped " attribute to limit CSS to this component only -->
+<style scoped>
+    .song-template {
+        padding: 0px;
+    }
+
+    .song {
+        font-family: Courier New, Courier, monospace;
+        margin-left: auto;
+        margin-right: auto;
+        padding-bottom: 3em;
+        font-size: 0.65em;
+        line-height: 1;
+    }
+
+    .link {
+        color: white !important;
+        text-decoration: underline !important;
+    }
+
+    .link:hover {
+        color: thistle !important;
+    }
+
+    /* landscape iPhone */
+
+    @media (min-width: 576px) {
+        .song {
+            font-size: 1em;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .fixed {
+            position: fixed;
+            right: 0px;
+        }
+    }
+</style>
+
+<style>
+    .sg_toc_header,
+    .sg_toc_contents,
+    .sg_title,
+    .sg_subtitle,
+    .sg_tab {
+        display: none;
+    }
+
+    .sg_comment {
+        font-weight: bold;
+        margin-top: 10px;
+        margin-bottom: 4px;
+    }
+
+    .sg_chorus_all {
+        /* width: 98%; */
+        /* margin-left: 0.5em; */
+        padding: 5px;
+        border-left: solid black 5px;
+        border-radius: 5px;
+        background-color: #ccc;
+
+    }
+
+    .sg_tab {
+        margin-top: 0.8em;
+        font-size: 0.7em;
+    }
+
+    .sg_chord {
+        font-size: 0.8em;
+    }
+</style>

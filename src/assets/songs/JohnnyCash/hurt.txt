@@ -1,0 +1,47 @@
+{title:Hurt}
+{subtitle:Johnny Cash}
+{artist:Johnny Cash}
+
+{c:Intro / Solo:}
+[Am][C][D]
+[Am][C][D]
+
+{c:1. Verse:}
+I hurt myself today, to see if I still feel
+I focus on the pain, the only thing thats real
+
+The needle tears a hole, the old familiar sting
+Try to kill it all away, but I rem[C]ember [D]every[G]thing
+
+{c:Chorus:}
+{soc}
+[Am]What Have I be[F]come, [C]  my sweetest [G]friend
+[Am]Everyone I [F]know, goes a[C]way in the [G]end
+
+And [Am]you could have it [F]all, [C]my empire of [G]dirt
+[Am]I will let you [F]down, [G]I will make you [Am]hurt
+{eoc}
+
+{c:2. Verse:}
+I  wear this crown of thorns, upon my liars chair
+Full of broken thoughts, I cannot repair
+
+
+Beneath the stains of time, the feeling disappears
+You are someone else, [C]I am [D]still right [G]here
+
+{c:Chorus:}
+{soc}
+[Am]What Have I be[F]come, [C]  my sweetest [G]friend
+[Am]Everyone I [F]know, goes a[C]way in the [G]end
+
+And [Am]you could have it [F]all, [C]my empire of [G]dirt
+[Am]I will let you [F]down, [C]I will make you [G]hurt
+
+If [Am]I could start ag[F]ain, [C] a million miles aw[G]ay
+[Am]I would keep myself, [F]I would [G]find a way[Am].
+{eoc}
+
+{c:Outro:}
+[Am][C][D]
+[Am][C][D]
