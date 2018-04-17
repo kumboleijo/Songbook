@@ -11,8 +11,8 @@ Live-Demo: https://www.songbook.de.cool
 
 ## Installation
 
-1.  Clone this repository.
-2.  `cd <path of repo>` and run `npm i`.
+1.  Download the latest release
+2.  `cd <DIRECTORY>` and run `npm i`.
 
 ## How to use it
 
