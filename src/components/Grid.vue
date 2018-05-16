@@ -3,7 +3,7 @@
 
         <b-row class="no-gutters" v-if="currentSong.name != 'Choose Song'" :key="currentSong.name">
             <b-col lg="4" order-lg="1" class="fixed">
-                <b-container fluid>
+                <b-container fluid class="song-card">
                     <b-card bg-variant="dark" text-variant="white" class="info-card" :title="getSongIndex(currentSong) + '.  ' + currentSong.name"
                         :sub-title="currentSong.artist">
                         <p class="card-text">
@@ -222,6 +222,10 @@
         line-height: 1;
     }
 
+    .card {
+        margin-bottom: 1em;
+    }
+
     .link {
         color: white !important;
         text-decoration: underline !important;
@@ -236,6 +240,13 @@
     @media (min-width: 576px) {
         .song {
             font-size: 1em;
+        }
+    }
+
+    @media (max-width: 990px) {
+        .song,
+        .song-card {
+            padding: 0px;
         }
     }
 
