@@ -19,7 +19,7 @@ Live-Demo: https://www.songbook.de.cool
 
 1.  Use the Songsheet Generator to convert a song from the chordpro file format to html
 2.  Copy this file into `src/assets/songs/{ArtistName}/`
-3.  You need to register your song in `Data.vue` located in `src/components/` and add it to a songbook
+3.  You need to register your song in `Data.vue` located in `src/components/`
 
 ```javascript
 Example
@@ -39,40 +39,65 @@ data() {
         currentSetlist: [ ... ],
 
         // put your song files here
-        songs: [
+        songs:
             {
-                id: 1, name: 'Hurt', artist: 'Johnny Cash',
-                files: [
-                   { capo: 0, file: Hurt }
-                ], infos: [
-                    // you can put song specific infos here
-                    // some examples:
-                    { info: 'Main Vocals', value: 'Max' },
-                    { info: 'Backing Vocals', value: 'Tina, Laura' }
-                ], stageDirections: {
-                    // the stage directions allow you to set song specific  instructions for mixing and stuff
-                    // currently they will be rendered as: Part | Presence
-                    // some examples:
-                    parts: [
-                        {
-                         name: 'Intro / Solo',
-                            values: [ 'E-Git1,', 'Synth' ]
-                        },
-                        {
-                            name: 'Verse',
-                            values: [ 'Main Vocals / Reverb' ]
-                        }
-                    ]
+                hurt: {
+                    name: 'Hurt', artist: 'Johnny Cash',
+                    files: [
+                        { capo: 0, file: Hurt }
+                    ], infos: [
+                    // you can add as many info boxes as you want per song
+                    // structure: { info: info, value: value }
+                        { info: 'Main Vocals', value: 'A' },
+                        { info: 'Backing Vocals', value: 'B, C' },
+                        { info: 'Keys', value: 'E-Piano' },
+                        { info: 'Rh. Git', value: 'E-Git' }
+                    ], stageDirections: {
+                        // you can put as many parts as you want per song
+                        parts: [
+                            {
+                                name: 'Intro / Solo', values: [
+                                    'A-Git / Jonas', 'E-Git / A'
+                                ]
+                            },
+                            {
+                                name: 'Verse', values: [
+                                    'Reverb'
+                                ]
+                            },
+                            {
+                                name: 'Outro', values: [
+                                    'A-Git / Jonas', 'E-Git / A'
+                                ]
+                            }
+                        ]
+                    }
                 }
             }
-        ],
-        // put your songbooks here
-        songbooks: [
-            { id: 1, name: 'Concert 1', date: '01.01.2018', songIDs: [1] },
-            { id: 2, name: 'Concert 2', date: '02.01.2018', songIDs: [1] },
-        ]
-    }
 }
+...
+```
+
+4.  Add the song to a songbook
+
+```javascript
+Example
+File: Data.vue
+
+export default {
+    name: 'Grid',
+    created() {
+
+        let mySongbooks = [
+            // this songbook will be auto generated and will contain all songs :)
+            { name: 'All Songs', date: '', songs: [] },
+            // #############################################################
+            {
+                name: 'My first Concert', date: '01.01.1970', songs: [
+                    this.songs.hurt
+                ]
+            }
+        ]
 ...
 ```
 
