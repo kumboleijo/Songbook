@@ -16,27 +16,6 @@
         name: 'App',
         components: {
             Grid, NavBar, Data
-        },
-        beforeCreate() {
-            // console.log("App > beforeCreate()")
-        },
-        created() {
-            // console.log("App > created()")
-        },
-        beforeMount() {
-            // console.log("App > beforeMount()")
-        },
-        beforeUpdate() {
-            // console.log("App > beforeUpdate()")
-        },
-        updated() {
-            // console.log("App > updated()")
-        },
-        beforeDestroy() {
-            // console.log("App > beforeDestroy()")
-        },
-        destroyed() {
-            // console.log("App > destroyed()")
         }
     }
 </script>

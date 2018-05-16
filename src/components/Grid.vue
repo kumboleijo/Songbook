@@ -3,7 +3,7 @@
 
         <b-row class="no-gutters" v-if="currentSong.name != 'Choose Song'" :key="currentSong.name">
             <b-col lg="4" order-lg="1" class="fixed">
-                <b-container fluid>
+                <b-container fluid class="song-card">
                     <b-card bg-variant="dark" text-variant="white" class="info-card" :title="getSongIndex(currentSong) + '.  ' + currentSong.name"
                         :sub-title="currentSong.artist">
                         <p class="card-text">
@@ -44,7 +44,7 @@
                             </b-row>
                         </p>
                     </b-card>
-                    <b-card bg-variant="dark" text-variatn="white" id="btn-controls" class="info-card" style="margin-top: .5em">
+                    <b-card bg-variant="dark" text-variatn="white" id="btn-controls" class="info-card" style="margin-top: .5em" v-if="getSongIndex(currentSong) != 0">
                         <b-row>
                             <b-col cols="6">
                                 <b-button block @click="previousSong()">&lsaquo; Previous</b-button>
@@ -61,6 +61,35 @@
             <b-col lg="8 ">
                 <!-- <b-container fluid class="song" v-html="songbook"></b-container fluid> -->
                 <b-container fluid class="song" v-html="currentSongFile"></b-container fluid>
+            </b-col>
+        </b-row>
+
+        <b-alert show variant="primary" v-if="currentSong.name == 'Choose Song'">
+            Newest Songbook:
+            <a href="#" class="alert-link" @click="openSongbook(songbooks[songbooks.length-1])">{{songbooks[songbooks.length-1].name}}</a>
+        </b-alert>
+
+        <b-row v-if="currentSong.name == 'Choose Song'">
+            <b-col lg="6">
+                <b-card bg-variant="dark" text-variant="white" title="Songbooks">
+                    <p class="card-text">
+                        Choose a songbook
+                    </p>
+                    <b-list-group>
+                        <b-list-group-item href="#" v-for="(songbook, index) in songbooks" :key="songbook.name + songbook.datum" @click="openSongbook(songbook)"
+                            :disabled="songbook.songs.length == 0">{{index+1}} - {{songbook.name}} {{songbook.date}}</b-list-group-item>
+                    </b-list-group>
+                </b-card>
+            </b-col>
+            <b-col lg="6">
+                <b-card bg-variant="dark" text-variant="white" title="All Songs">
+                    <p class="card-text">
+                        Choose a song
+                    </p>
+                    <b-list-group>
+                        <b-list-group-item href="#" v-for="(song, index) in songbooks[0].songs" :key="song.name" @click="openSong(song)">{{index + 1}} - {{song.name}} ({{song.artist}})</b-list-group-item>
+                    </b-list-group>
+                </b-card>
             </b-col>
         </b-row>
     </b-container>
@@ -94,8 +123,10 @@
 
             this.$eventHub.on('current-song-changed', ($Data) => {
                 this.currentSong = $Data
-                this.currentSongFile = this.currentSong.files[0].file
-                this.currentSongCapo = this.currentSong.files[0].capo
+                if ($Data.files) {
+                    this.currentSongFile = this.currentSong.files[0].file
+                    this.currentSongCapo = this.currentSong.files[0].capo
+                }
             })
 
             this.$eventHub.on('settings-changed', ($Data) => {
@@ -121,13 +152,12 @@
         },
         data() {
             return {
-                songs: [],
-                songbooks: [],
-                currentSongbook: { name: 'Choose Songbook' },
-                currentSong: { id: 0, name: 'Choose Song' },
+                songs: {},
+                songbooks: [{ name: '', date: '', songs: [] }],
+                currentSongbook: { name: 'Choose Songbook', date: '', songs: [] },
+                currentSong: { name: 'Choose Song' },
                 currentSongCapo: 0,
                 currentSongFile: null,
-                currentSetlist: [],
                 settings: [
                     { name: 'Stage Directions', value: false }
                 ],
@@ -137,6 +167,7 @@
         computed: {
             songbook() {
                 let chordSheet = this.currentSongFile.substring(0);
+                // console.log(this.currentSong)
 
                 let parser = new ChordSheetJS.ChordProParser();
                 let song = parser.parse(chordSheet);
@@ -149,21 +180,7 @@
         },
         methods: {
             getSongIndex(song) {
-                return (this.currentSetlist.indexOf(song) + 1).toString()
-            },
-            getPrevSong() {
-                if (this.getSongIndex(this.currentSong) > 1) {
-                    return this.currentSetlist[this.getSongIndex(this.currentSong) - 2].name
-                } else {
-                    return "---"
-                }
-            },
-            getNextSong() {
-                if (this.getSongIndex(this.currentSong) < this.currentSetlist.length) {
-                    return this.currentSetlist[this.getSongIndex(this.currentSong)].name
-                } else {
-                    return "---"
-                }
+                return (this.currentSongbook.songs.indexOf(song) + 1).toString()
             },
             nextSong() {
                 this.$eventHub.emit('next-song')
@@ -171,8 +188,12 @@
             previousSong() {
                 this.$eventHub.emit('previous-song')
             },
+            openSongbook(book) {
+                this.$eventHub.$emit('songbook-changed', book);
+            },
             openSong(song) {
-                this.$emit('songChanged', song)
+                window.scrollTo(0, 0)
+                this.$eventHub.$emit('song-changed', song);
             },
             changeCapo(file) {
                 this.currentSongCapo = file.capo
@@ -223,6 +244,10 @@
         line-height: 1;
     }
 
+    .card {
+        margin-bottom: 1em;
+    }
+
     .link {
         color: white !important;
         text-decoration: underline !important;
@@ -237,6 +262,13 @@
     @media (min-width: 576px) {
         .song {
             font-size: 1em;
+        }
+    }
+
+    @media (max-width: 990px) {
+        .song,
+        .song-card {
+            padding: 0px;
         }
     }
 
