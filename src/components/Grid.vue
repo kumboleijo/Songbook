@@ -48,15 +48,18 @@
                         <b-row>
                             <b-col cols="6">
                                 <b-button block @click="previousSong()">&lsaquo; Previous</b-button>
+                                <!-- <b-button block @click="previousSong()">&lsaquo; {{getPrevSong()}}</b-button> -->
                             </b-col>
                             <b-col cols="6">
                                 <b-button block @click="nextSong()">Next &rsaquo;</b-button>
+                                <!-- <b-button block @click="nextSong()">{{getNextSong()}} &rsaquo;</b-button> -->
                             </b-col>
                         </b-row>
                     </b-card>
                 </b-container>
             </b-col>
             <b-col lg="8 ">
+                <!-- <b-container fluid class="song" v-html="songbook"></b-container fluid> -->
                 <b-container fluid class="song" v-html="currentSongFile"></b-container fluid>
             </b-col>
         </b-row>
@@ -74,9 +77,7 @@
                     </p>
                     <b-list-group>
                         <b-list-group-item href="#" v-for="(songbook, index) in songbooks" :key="songbook.name + songbook.datum" @click="openSongbook(songbook)"
-                            :disabled="songbook.songs.length == 0">{{index}} - {{songbook.name}}
-                            <span v-if="songbook.date">({{songbook.date}})</span>
-                        </b-list-group-item>
+                            :disabled="songbook.songs.length == 0">{{index+1}} - {{songbook.name}} {{songbook.date}}</b-list-group-item>
                     </b-list-group>
                 </b-card>
             </b-col>
@@ -101,7 +102,12 @@
         name: 'Grid',
         components: {
         },
+        beforeCreate() {
+            // console.log("Grid > beforeCreate()")
+        },
         created() {
+            // console.log("Grid > created()")
+
             this.$eventHub.on('data-created', ($Data) => {
                 this.songs = $Data.songs
                 this.songbooks = $Data.songbooks
@@ -129,6 +135,21 @@
 
             window.addEventListener('keyup', this.onKeyUp)
         },
+        beforeMount() {
+            // console.log("Grid > beforeMount()")
+        },
+        beforeUpdate() {
+            // console.log("Grid > beforeUpdate()")
+        },
+        updated() {
+            // console.log("Grid > updated()")
+        },
+        beforeDestroy() {
+            // console.log("Grid > beforeDestroy()")
+        },
+        destroyed() {
+            // console.log("Grid > destroyed()")
+        },
         data() {
             return {
                 songs: {},
@@ -146,6 +167,7 @@
         computed: {
             songbook() {
                 let chordSheet = this.currentSongFile.substring(0);
+                // console.log(this.currentSong)
 
                 let parser = new ChordSheetJS.ChordProParser();
                 let song = parser.parse(chordSheet);
