@@ -1,6 +1,6 @@
 # Songbook
 
-> This project allows you to generate your own responsive web songbook!
+> This project allows you to generate your own responsive web songbook.
 
 Live-Demo: https://www.songbook.de.cool
 
