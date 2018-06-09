@@ -2,15 +2,16 @@
 
 </template>
 <script>
-    // html song imports
+    // song imports
     import Hurt from '../assets/songs/JohnnyCash/hurt.html'
 
     export default {
         name: 'Grid',
         created() {
-
+            // put your songbooks here
             let mySongbooks = [
-                // this songbook will be auto generated and will contain all songs :)
+                // this songbook will be auto generated with all songs
+                // #############################################################
                 { name: 'All Songs', date: '', songs: [] },
                 // #############################################################
                 {
@@ -18,8 +19,11 @@
                         this.songs.hurt
                     ]
                 }
+
             ]
 
+            // sort all songs by name
+            // #############################################################
             let sortedSongs = []
 
             for (const song in this.songs) {
@@ -42,11 +46,13 @@
             for (const song of sortedSongs) {
                 mySongbooks[0].songs.push(song)
             }
+            // #############################################################
 
             // fire data-created event
-            this.$eventHub.emit('data-created', { bandName: this.bandName, bandLogo: this.bandLogo, songbooks: this.songbooks, songs: this.songs });
+            this.$eventHub.emit('data-created', { bandLogo: this.bandLogo, songbooks: this.songbooks, songs: this.songs, albums: this.albums });
 
             // subscribe to other events
+            // #############################################################
             this.$eventHub.on('songbook-changed', ($Data) => {
                 this.currentSongbook = $Data
                 this.$eventHub.emit('current-songbook-changed', this.currentSongbook)
@@ -72,6 +78,7 @@
                     this.currentSong = this.currentSongbook.songs[this.getCurrentSongIdofCurrentSetlist() - 1]
                 }
             })
+            // #############################################################
         },
         methods: {
             getCurrentSongIdofCurrentSetlist() {
@@ -84,48 +91,56 @@
         },
         data() {
             return {
-                bandName: 'Your Bandname',
                 currentSongbook: { name: 'Choose Songbook', date: '', songs: [] },
                 currentSong: { id: 0, name: 'Choose Song', artist: '', file: '', infos: [] },
-                currentSetlist: [],
 
                 // put your song files here
                 songs:
+                {
+                    hurt: {
+                        name: 'Hurt', artist: 'Johnny Cash',
+                        files: [
+                            { capo: 0, file: Hurt }
+                        ], infos: [
+                            // you can add as many info boxes as you want per song
+                            // structure: { info: info, value: value }
+                            { info: 'Main Vocals', value: 'A' },
+                            { info: 'Backing Vocals', value: 'B, C' },
+                            { info: 'Keys', value: 'E-Piano' },
+                            { info: 'Rh. Git', value: 'E-Git' }
+                        ], stageDirections: {
+                            // you can put as many parts as you want per song
+                            parts: [
+                                {
+                                    name: 'Intro / Solo', values: [
+                                        'A-Git', 'E-Git'
+                                    ]
+                                },
+                                {
+                                    name: 'Verse', values: [
+                                        'Reverb'
+                                    ]
+                                },
+                                {
+                                    name: 'Outro', values: [
+                                        'A-Git', 'E-Git'
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    pause: { name: 'Pause', artist: '', files: [{ capo: 0, file: '<h3>Pause</h3>' }], infos: [], stageDirections: [] }
+                }
+
+                // put your music sources here
+                , albums: [
                     {
-                        hurt: {
-                            name: 'Hurt', artist: 'Johnny Cash',
-                            files: [
-                                { capo: 0, file: Hurt }
-                            ], infos: [
-                                // you can add as many info boxes as you want per song
-                                // structure: { info: info, value: value }
-                                { info: 'Main Vocals', value: 'A' },
-                                { info: 'Backing Vocals', value: 'B, C' },
-                                { info: 'Keys', value: 'E-Piano' },
-                                { info: 'Rh. Git', value: 'E-Git' }
-                            ], stageDirections: {
-                                // you can put as many parts as you want per song
-                                parts: [
-                                    {
-                                        name: 'Intro / Solo', values: [
-                                            'A-Git / Jonas', 'E-Git / A'
-                                        ]
-                                    },
-                                    {
-                                        name: 'Verse', values: [
-                                            'Reverb'
-                                        ]
-                                    },
-                                    {
-                                        name: 'Outro', values: [
-                                            'A-Git / Jonas', 'E-Git / A'
-                                        ]
-                                    }
-                                ]
-                            }
-                        },
-                        pause: { name: 'Pause', artist: '', files: [{ capo: 0, file: '<h3>Pause</h3>' }], infos: [], stageDirections: [] }
+                        name: 'My Album', albumArtist: 'My Band', albumArt: 'secretbase.jpg', path: 'https://moeplayer.b0.upaiyun.com/aplayer/', tracks: [
+                            { name: "Secretbase", file: 'secretbase.mp3' }
+                        ]
                     }
+                ]
+
             }
         }
     }
