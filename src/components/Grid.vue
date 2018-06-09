@@ -1,10 +1,10 @@
 <template>
-    <b-container fluid style="margin-top: .5em">
+    <b-container fluid style="margin-top: .5em; margin-bottom: .5em">
 
         <b-row class="no-gutters" v-if="currentSong.name != 'Choose Song'" :key="currentSong.name">
             <b-col lg="4" order-lg="1" class="fixed">
                 <b-container fluid class="song-card">
-                    <b-card bg-variant="dark" text-variant="white" class="info-card" :title="getSongIndex(currentSong) + '.  ' + currentSong.name"
+                    <b-card bg-variant="dark" text-variant="white" class="info-card" :title="getSongIndex(currentSong) + '  ' + currentSong.name"
                         :sub-title="currentSong.artist">
                         <p class="card-text">
                             <b-row class="no-gutters">
@@ -48,18 +48,15 @@
                         <b-row>
                             <b-col cols="6">
                                 <b-button block @click="previousSong()">&lsaquo; Previous</b-button>
-                                <!-- <b-button block @click="previousSong()">&lsaquo; {{getPrevSong()}}</b-button> -->
                             </b-col>
                             <b-col cols="6">
                                 <b-button block @click="nextSong()">Next &rsaquo;</b-button>
-                                <!-- <b-button block @click="nextSong()">{{getNextSong()}} &rsaquo;</b-button> -->
                             </b-col>
                         </b-row>
                     </b-card>
                 </b-container>
             </b-col>
             <b-col lg="8 ">
-                <!-- <b-container fluid class="song" v-html="songbook"></b-container fluid> -->
                 <b-container fluid class="song" v-html="currentSongFile"></b-container fluid>
             </b-col>
         </b-row>
@@ -67,28 +64,57 @@
         <b-alert show variant="primary" v-if="currentSong.name == 'Choose Song'">
             Newest Songbook:
             <a href="#" class="alert-link" @click="openSongbook(songbooks[songbooks.length-1])">{{songbooks[songbooks.length-1].name}}</a>
-        </b-alert>
 
+        </b-alert>
         <b-row v-if="currentSong.name == 'Choose Song'">
             <b-col lg="6">
-                <b-card bg-variant="dark" text-variant="white" title="Songbooks">
+
+                <b-card bg-variant="dark" text-variant="white" title="Songbooks" v-b-toggle="'collapse-songbooks'">
                     <p class="card-text">
                         Choose a songbook
                     </p>
-                    <b-list-group>
-                        <b-list-group-item href="#" v-for="(songbook, index) in songbooks" :key="songbook.name + songbook.datum" @click="openSongbook(songbook)"
-                            :disabled="songbook.songs.length == 0">{{index+1}} - {{songbook.name}} {{songbook.date}}</b-list-group-item>
-                    </b-list-group>
+                    <b-collapse id="collapse-songbooks">
+                        <b-list-group>
+                            <b-list-group-item href="#" v-for="(songbook, index) in songbooks" :key="songbook.name + songbook.datum" @click="openSongbook(songbook)"
+                                :disabled="songbook.songs.length == 0">{{index}} - {{songbook.name}} {{songbook.date}}</b-list-group-item>
+                        </b-list-group>
+                    </b-collapse>
                 </b-card>
-            </b-col>
-            <b-col lg="6">
-                <b-card bg-variant="dark" text-variant="white" title="All Songs">
+                <b-card bg-variant="dark" text-variant="white" title="All Songs" v-b-toggle="'collapse-songs'">
                     <p class="card-text">
                         Choose a song
                     </p>
-                    <b-list-group>
-                        <b-list-group-item href="#" v-for="(song, index) in songbooks[0].songs" :key="song.name" @click="openSong(song)">{{index + 1}} - {{song.name}} ({{song.artist}})</b-list-group-item>
-                    </b-list-group>
+                    <b-collapse id="collapse-songs">
+                        <b-list-group>
+                            <b-list-group-item href="#" v-for="(song, index) in songbooks[0].songs" :key="song.name" @click="openSong(song)">{{index + 1}} - {{song.name}} ({{song.artist}})</b-list-group-item>
+                        </b-list-group>
+                    </b-collapse>
+                </b-card>
+            </b-col>
+            <b-col lg="6">
+                <b-card bg-variant="dark" text-variant="white" title="Music">
+
+                    <p class="card-text">
+                        Listen to some funky tunes
+                    </p>
+
+                    <span v-for="(album, index) in albums" :key="album.name">
+
+                        <span v-if="getTracksOfAlbum(album).length > 1">
+
+                            <b>{{album.name}}</b>
+                            <aplayer style="width: 100%" listFolded :music="getFirstTrackOfAlbum(album)" :list="getTracksOfAlbum(album)">
+                            </aplayer>
+                        </span>
+                        <span v-if="getTracksOfAlbum(album).length == 1">
+
+                            <b>{{album.name}}</b>
+                            <aplayer style="width: 100%" listFolded :music="getFirstTrackOfAlbum(album)">
+                            </aplayer>
+                        </span>
+                    </span>
+
+
                 </b-card>
             </b-col>
         </b-row>
@@ -97,20 +123,16 @@
 
 <script>
     import ChordSheetJS from 'chordsheetjs';
+    import Aplayer from 'vue-aplayer'
 
     export default {
         name: 'Grid',
-        components: {
-        },
-        beforeCreate() {
-            // console.log("Grid > beforeCreate()")
-        },
+        components: { Aplayer },
         created() {
-            // console.log("Grid > created()")
-
             this.$eventHub.on('data-created', ($Data) => {
                 this.songs = $Data.songs
                 this.songbooks = $Data.songbooks
+                this.albums = $Data.albums
             })
 
             this.$eventHub.on('current-songbook-changed', ($Data) => {
@@ -135,21 +157,6 @@
 
             window.addEventListener('keyup', this.onKeyUp)
         },
-        beforeMount() {
-            // console.log("Grid > beforeMount()")
-        },
-        beforeUpdate() {
-            // console.log("Grid > beforeUpdate()")
-        },
-        updated() {
-            // console.log("Grid > updated()")
-        },
-        beforeDestroy() {
-            // console.log("Grid > beforeDestroy()")
-        },
-        destroyed() {
-            // console.log("Grid > destroyed()")
-        },
         data() {
             return {
                 songs: {},
@@ -161,26 +168,14 @@
                 settings: [
                     { name: 'Stage Directions', value: false }
                 ],
+                albums: [],
                 scroll: false
-            }
-        },
-        computed: {
-            songbook() {
-                let chordSheet = this.currentSongFile.substring(0);
-                // console.log(this.currentSong)
-
-                let parser = new ChordSheetJS.ChordProParser();
-                let song = parser.parse(chordSheet);
-
-                let formatter = new ChordSheetJS.HtmlTableFormatter();
-                let html = formatter.format(song);
-
-                return html
             }
         },
         methods: {
             getSongIndex(song) {
-                return (this.currentSongbook.songs.indexOf(song) + 1).toString()
+                if ((this.currentSongbook.songs.indexOf(song) + 1).toString() == 0) return ""
+                else return (this.currentSongbook.songs.indexOf(song) + 1).toString() + "."
             },
             nextSong() {
                 this.$eventHub.emit('next-song')
@@ -198,6 +193,31 @@
             changeCapo(file) {
                 this.currentSongCapo = file.capo
                 this.currentSongFile = file.file
+            },
+            getTracksOfAlbum(album) {
+                let tracks = []
+
+                album.tracks.forEach(track => {
+                    let tempTrack = {
+                        title: track.name,
+                        artist: album.albumArtist,
+                        src: album.path + track.file,
+                        pic: album.path + album.albumArt
+                    }
+
+                    tracks.push(tempTrack)
+                });
+
+                return tracks
+            },
+            getFirstTrackOfAlbum(album) {
+                let track = {
+                    title: album.tracks[0].name,
+                    artist: album.albumArtist,
+                    src: album.path + album.tracks[0].file,
+                    pic: album.path + album.albumArt
+                }
+                return track
             },
             autoScroll() {
                 window.scrollBy(0, 1)
@@ -313,4 +333,18 @@
     .sg_chord {
         font-size: 0.8em;
     }
+
+    /* Aplayer styles */
+
+    .aplayer-volume-wrap {
+        display: none;
+    }
+
+    .aplayer-icon.aplayer-icon-mode {
+        display: none;
+    }
+
+    .aplayer-icon {}
+
+    .aplayer-icon.aplayer-icon-menu {}
 </style>

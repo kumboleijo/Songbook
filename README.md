@@ -2,41 +2,53 @@
 
 > This project allows you to generate your own responsive web songbook.
 
-Live-Demo: https://www.songbook.de.cool
+## Features
+
+- Access all your songbooks and band music files
+- Support for multiple songsheets per song in different keys
+- Easy printing
+- ! The whole songbook is offline accessible !
+- You can install the songbook on your mobile device (iOS > 12, Android)
+
+![Songbook](https://github.com/kumboleijo/Songbook/blob/master/imgs/img_1.png?raw=true)
+![Songbook](https://github.com/kumboleijo/Songbook/blob/master/imgs/img_2.png?raw=true)
+![Songbook](https://github.com/kumboleijo/Songbook/blob/master/imgs/ios_1.png?raw=true)
+![Songbook](https://github.com/kumboleijo/Songbook/blob/master/imgs/ios_2.png?raw=true)
 
 ## Prerequisites
 
 1.  Install `npm` (just download [NodeJS](https://nodejs.org/en/), `npm` will be installed right away)
 2.  To create .html files out of your chordpro files you need the [Songsheet Generator](http://tenbyten.com/software/songsgen/) by Ten by Ten Software.
 
+(you can also use yarn as a package manager)
+
 ## Installation
 
-1.  Download the latest release (you can find all releases [here](https://github.com/kumboleijo/Songbook/releases) - currently Songbook v1.0)
-    > `git clone --branch v1.0 --single-branch https://github.com/kumboleijo/Songbook`
-2.  `cd <DIRECTORY>` and run `npm i`.
+1.  Download the latest release (you can find all releases [here](https://github.com/kumboleijo/Songbook/releases) - currently Songbook v1.1)
+    > `git clone --branch v1.1 --single-branch https://github.com/kumboleijo/Songbook`
+2.  `cd <DIRECTORY>` and run `npm i`
+3.  run `npm run dev`
 
 ## How to use it
 
 1.  Use the Songsheet Generator to convert a song from the chordpro file format to html
 2.  Copy this file into `src/assets/songs/{ArtistName}/`
-3.  You need to register your song in `Data.vue` located in `src/components/`
+3.  Register your song in `Data.vue` located in `src/components/`
 
 ```javascript
 Example
 File: Data.vue
 
 ...
-// html song imports
+// song imports
 import Hurt from '../assets/songs/JohnnyCash/hurt.html'
 ...
 
 ...
 data() {
     return {
-        bandName: 'My Band',
-        currentSongbook: { ... },
-        currentSong: { ... },
-        currentSetlist: [ ... ],
+        currentSongbook: { name: 'Choose Songbook', date: '', songs: [] },
+        currentSong: { id: 0, name: 'Choose Song', artist: '', file: '', infos: [] },
 
         // put your song files here
         songs:
@@ -57,7 +69,7 @@ data() {
                         parts: [
                             {
                                 name: 'Intro / Solo', values: [
-                                    'A-Git / Jonas', 'E-Git / A'
+                                    'A-Git', 'E-Git'
                                 ]
                             },
                             {
@@ -67,7 +79,7 @@ data() {
                             },
                             {
                                 name: 'Outro', values: [
-                                    'A-Git / Jonas', 'E-Git / A'
+                                    'A-Git', 'E-Git'
                                 ]
                             }
                         ]
@@ -101,6 +113,14 @@ export default {
 ...
 ```
 
+5.  Update package.json with your band infos
+
+```javascript
+  "bandName": "{Your Bandname}",
+  "bandImage": "./static/{your_cover_file}.png",
+  "iconPath": "./src/assets/icons/{your_icon_file}.png",
+```
+
 ## Build Setup
 
 ```bash
@@ -116,7 +136,3 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
-
-# Roadmap
-
-* Implement a JavaScript Parser for the chordpro format

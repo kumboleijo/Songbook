@@ -4,8 +4,7 @@
         <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
         <b-navbar-brand href="#" @click="home()">
-            <!-- add your band logo here -->
-            <img src="../assets/logo.png" style="width: 30px; border-radius:5px" /> {{bandName}}
+            <img :src="bandImage" style="width: 30px; border-radius:5px" /> {{bandName}}
         </b-navbar-brand>
 
         <b-collapse is-nav id="nav_collapse">
@@ -28,6 +27,11 @@
                         <span v-if="!setting.value">Show</span>
                         <span>{{setting.name}}</span>
                     </b-dropdown-item>
+                    <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-item-button id="reload">Refresh App</b-dropdown-item-button>
+                    <b-dropdown-item disabled>App: {{version}}</b-dropdown-item>
+                    <b-dropdown-item disabled>Build: {{timestamp}}</b-dropdown-item>
+
                 </b-nav-item-dropdown>
             </b-navbar-nav>
 
@@ -38,11 +42,9 @@
 <script>
     export default {
         name: 'NavBar',
-        components: {
-        },
+        components: {},
         created() {
             this.$eventHub.on('data-created', ($Data) => {
-                this.bandName = $Data.bandName
                 this.songs = $Data.songs
                 this.songbooks = $Data.songbooks
 
@@ -62,7 +64,10 @@
         },
         data() {
             return {
-                bandName: '',
+                version: VERSION,
+                timestamp: TIMESTAMP,
+                bandName: BANDNAME,
+                bandImage: BANDIMAGE,
                 songs: {},
                 songbooks: [{ name: '', date: '', songs: [] }],
                 currentSongbook: { name: 'Choose Songbook', date: '', songs: [] },
@@ -71,8 +76,6 @@
                     { name: 'Stage Directions', value: false }
                 ]
             }
-        },
-        computed: {
         },
         methods: {
             home() {

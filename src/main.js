@@ -19,3 +19,34 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+
+if (BANDNAME != '') document.title = BANDNAME
+
+// register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('/service-worker.js')
+    .then(function(registration) {
+      // registration worked
+      console.log('Registration succeeded.')
+
+      // force the app to unregister service worker and reload
+      document.getElementById('reload').onclick = function() {
+        navigator.serviceWorker
+          .getRegistrations()
+          .then(function(registrations) {
+            for (let registration of registrations) {
+              registration.unregister()
+            }
+            location.reload()
+          })
+          .catch(function(err) {
+            console.log('Service Worker unregistration failed: ', err)
+          })
+      }
+    })
+    .catch(function(error) {
+      // registration failed
+      console.log('Registration failed with ' + error)
+    })
+}
