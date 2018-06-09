@@ -10,10 +10,13 @@
 - ! The whole songbook is offline accessible !
 - You can install the songbook on your mobile device (iOS > 12, Android)
 
-![Songbook](https://github.com/kumboleijo/Songbook/blob/master/imgs/img_1.png?raw=true)
-![Songbook](https://github.com/kumboleijo/Songbook/blob/master/imgs/img_2.png?raw=true)
-![Songbook](https://github.com/kumboleijo/Songbook/blob/master/imgs/ios_1.png?raw=true)
-![Songbook](https://github.com/kumboleijo/Songbook/blob/master/imgs/ios_2.png?raw=true)
+<img src="https://github.com/kumboleijo/Songbook/blob/master/imgs/img_1.png?raw=true" height="300px">
+<br>
+<img src="https://github.com/kumboleijo/Songbook/blob/master/imgs/img_2.png?raw=true" height="300px">
+<br>
+<img src="https://github.com/kumboleijo/Songbook/blob/master/imgs/ios_1.png?raw=true" height="300px">
+<img src="https://github.com/kumboleijo/Songbook/blob/master/imgs/ios_2.png?raw=true" height="300px">
+<br>
 
 ## Prerequisites
 
