@@ -2,6 +2,8 @@
 
 > This project allows you to generate your own responsive web songbook.
 
+<a href="https://www.buymeacoffee.com/kumboleijo" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 ## Features
 
 - Access all your songbooks and band music files
